@@ -1,0 +1,456 @@
+<script type="text/javascript" src="<?php echo $this->bootstrapJS ?>"></script>
+<link rel="stylesheet" href="<?php echo $this->bootstrapCSS ?>" />
+
+<style>
+    .clearfix:after {
+        content: ".";
+        display: block;
+        clear: both;
+        visibility: hidden;
+        line-height: 0;
+        height: 0;
+    }
+
+    html,body{height: 100.1%}
+    body{background-color: #7F7F7F!important}
+
+    #lw_fe_inputelement_lw_formular_template{width: 800px;height: 600px;}
+    #tabs ul li a{color: #fff;}
+
+    .activeline {background: #e8f2ff !important;}
+
+    .active{background-color: #777;}
+
+    .description {
+        margin-bottom:5px;
+        border:1px solid #aaa;
+        border-radius: 5px;
+        background-color:#eee;
+        padding:10px;
+    }
+
+    .description h1{
+        font-size: 20px;
+        font-style: italic;
+        margin-bottom: 15px;
+    }
+
+    .description p{margin-bottom: 10px;}
+
+    .description #info{
+        border: 1px solid red;
+        padding: 10px 0 10px 300px;
+        font-size: 16px;
+        background-color: darkred;
+        color: #fff;
+    }
+
+    legend.lwadminform {
+        height: 20px;
+        margin-bottom: 2px;
+        line-height: 20px;
+        width: 60px;
+    }
+    html body div#lwContent div {
+        font-size: 12px!important;
+    }
+
+    fieldset.lwadminform {
+        position: relative;
+    }
+
+
+    html body div#lwLeftnavi div#lwPageTreeNav.lwBoxLeftContent center form#gotoform input#gotoid {
+        width: 45px;
+        margin-bottom: 0;
+    }
+    html body div#lwLeftnavi div#lwPageTreeNav.lwBoxLeftContent center {
+        height: 35px;
+    }    
+
+
+    #container{
+        background-color: #fff;
+        border: 1px solid #bbb;
+        border-radius: 10px;
+        padding: 10px;
+        padding-bottom: 20px;
+    }
+
+    #inner_container{
+        margin: auto;
+        width: 1075px;
+    }
+
+    #pageViewContainer{
+        padding: 20px;
+        width: 300px;
+        border-left: 1px solid #eee;
+        float: left;
+        margin-left: -1px;
+    }
+
+    #pageViewConfigContainer{
+        float: left;
+        width: 600px;
+        border-right: 1px solid #eee;
+        padding: 20px
+    }
+
+    #pageViewContainer img{padding-right: 5px}
+
+    #parantPage{
+        text-decoration: underline;
+    }
+
+    #parantPage a{
+        background-color: transparent;
+        color: #333;
+        padding: 0;
+        margin: 0;
+    }
+
+    #pageView{
+        margin: 0 0 0 6px;
+        padding: 10px 0 0 0;
+        list-style: none;
+        border-left: 1px solid #ddd;
+    }
+
+    #pageView ul {
+        list-style: none;
+        margin: 0 0 0 7px;
+        padding: 5px 0 0 0px;
+        list-style: none;
+    }
+    #pageView ul.last {
+        list-style: none;
+        margin: 0 0 0 -11px;
+        padding: 5px 0 0 18px;
+        list-style: none;
+        background-color: #fff;
+    }
+
+
+    #pageView li {
+        margin: 0;
+        padding-left: 10px;
+        position: relative;
+    }
+
+    #pageView li a{
+        background-color: transparent;
+        color: #333;
+        padding: 0;
+        margin: 0;
+    }
+
+    #pageView li a:hover{
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .selected{
+        font-weight: bold;
+    }
+
+
+    #pageView li span.connector{
+        position: absolute;
+        top: 10px;
+        left: 0;
+        height: 3px;
+        width: 10px;
+        border-top: 1px solid #ddd;
+    }
+
+    #pageView li span.connector_last{
+        position: absolute;
+        top: 10px;
+        left: -1px;
+        height: 10px;
+        width: 10px;
+        border-top: 1px solid #ddd;
+        background-color: #fff;
+    }
+
+    #pageView ul li span.connector{
+        position: absolute;
+        top: -6px;
+        left: -1px;
+        height: 20px;
+        width: 10px;
+        border-bottom: 1px solid #ddd;
+        border-left: 1px solid #ddd;
+        border-top: none;
+        border-right: none;
+    }
+
+    #pageView ul li span.connector_last{
+        position: absolute;
+        top: -6px;
+        left: -1px;
+        height: 20px;
+        width: 10px;
+        border-bottom: 1px solid #ddd;
+        border-left: 1px solid #ddd;
+        border-top: none;
+        border-right: none;
+    }
+
+    #hiddenElements{display: none;}
+
+    #pageView ul li.border-left{
+        border-left: 1px solid #ddd;
+        margin-left: -1px
+    }
+
+    #addPagesForm div.error{
+        background-color: darkred;
+        padding: 5px;
+        margin-bottom: 10px; 
+        font-size: 15px;
+        font-weight: bold;
+        text-align: center;
+        border-radius: 10px;
+        width: 95%;
+    }
+    #addPagesForm div.error p{color: #fff;}
+</style>
+
+<script>
+    $(document).ready(function() {
+        var i = 0;
+        $("#resetPageTree").click(function() {
+            if (confirm("Gesamte Struktur wird entfernt ?")) {
+                $("ul#pageView li").remove();
+                i = 0;
+                $("#hiddenElements #hidden_li li span").removeClass('connector');
+                $("#hiddenElements #hidden_li li span").addClass('connector_last');
+                $("#addPagesCode").val("");
+            }
+        });
+        $("#removePage").click(function() {
+            if (confirm("Element entfernen ?")) {
+                $("a.selected").closest("li").remove();
+                checkLiUl();
+                treeStructureToText();
+            }
+        });
+
+        $("#addPage").click(function() {
+            if ($("#pageViewContainer a").hasClass("selected")) {
+                i++;
+                var newPageName = prompt("Bitte Seitenname eingeben:");
+                if (newPageName === "") {
+                    newPageName = "Neue Seite Nr." + i;
+                }
+                var liId = $("a.selected").closest("li").attr("id");
+
+                if ($("#parantPage a").hasClass("selected")) {
+                    if ($("ul#PageView").children().size() === 0) {
+                        $('#hiddenElements #hidden_li li a').html(newPageName);
+                        $('#hiddenElements #hidden_li li').attr("id", "entry_" + i);
+                        $('#hiddenElements #hidden_li li').attr("class", i + "_x");
+                        $('#hiddenElements #hidden_li li').clone()
+                                .appendTo('ul#PageView');
+                    } else {
+                        $("ul#pageView ul").removeClass("last");
+                        $("ul#PageView li span").removeClass('connector_last');
+                        $("ul#PageView li span").addClass('connector');
+                        $("#hiddenElements #hidden_li li span").removeClass('connector');
+                        $("#hiddenElements #hidden_li li span").addClass('connector_last');
+                        $('#hiddenElements #hidden_li li a').html(newPageName);
+                        $('#hiddenElements #hidden_li li').attr("id", "entry_" + i);
+                        $('#hiddenElements #hidden_li li').attr("class", i + "_x");
+                        $('#hiddenElements #hidden_li li').clone()
+                                .appendTo('ul#PageView');
+                    }
+                } else {
+
+                    var temp = $("li#" + liId).html();
+                    var index = temp.indexOf("<ul");
+                    var tempClass = $("li#" + liId).attr("class");
+                    tempClass = tempClass.replace("border-left", "");
+                    tempClass = tempClass.replace(" ", "");
+                    var parentId = tempClass.substring(0, tempClass.indexOf("_x"));
+                    tempClass = tempClass.replace(parentId + "_x", "");
+
+                    if ($("ul#pageView li:last a").hasClass("selected") && $("ul#pageView li:last a.selected").children().size() === 0) {
+                        $('#hiddenElements #hidden_ulli li a').html(newPageName);
+                        $('#hiddenElements #hidden_ulli li').attr("id", "entry_" + i);
+                        $('#hiddenElements #hidden_ulli li').attr("class", i + "_x" + tempClass + ":" + parentId);
+                        $('#hiddenElements #hidden_ulli ul').addClass("last");
+                        $('#hiddenElements #hidden_ulli ul').clone()
+                                .appendTo("ul#pageView li:last");
+                    } else {
+                        if (index === -1) {
+                            $('#hiddenElements #hidden_ulli li a').html(newPageName);
+                            $('#hiddenElements #hidden_ulli li').attr("id", "entry_" + i);
+                            $('#hiddenElements #hidden_ulli li').attr("class", i + "_x" + tempClass + ":" + parentId);
+                            $('#hiddenElements #hidden_ulli ul').removeClass("last");
+                            $('#hiddenElements #hidden_ulli ul').clone()
+                                    .appendTo("li#" + liId);
+
+                        } else {
+                            $('#hiddenElements #hidden_li li a').html(newPageName);
+                            $('#hiddenElements #hidden_li li').attr("id", "entry_" + i);
+                            $('#hiddenElements #hidden_li li').attr("class", i + "_x" + tempClass + ":" + parentId);
+                            $("#hiddenElements #hidden_li li span").removeClass('connector_last');
+                            $("#hiddenElements #hidden_li li span").addClass('connector');
+                            $("#hiddenElements #hidden_li li").clone()
+                                    .appendTo($("li#" + liId).children("ul"));
+                        }
+                    }
+                }
+            }
+
+            checkLiUl();
+            treeStructureToText();
+        });
+
+        function checkLiUl() {
+            $("#pageView li").each(function() {
+                if ($(this).has("ul")) {
+                    if (!$(this).is(":last-child")) {
+                        $(this).addClass("border-left");
+                        $("> ul", this).removeClass("last");
+                    }
+                }
+                else {
+                    $(this).removeClass("border-left");
+                }
+            });
+        }
+
+        $("#pageViewContainer a").click(function() {
+            $("#pageViewContainer a").removeClass("selected");
+            $(this).addClass("selected");
+        });
+
+        $("#pageIdTextBox").keyup(function() {
+            this.value = this.value.replace(/[^0-9\.]/g, '');
+        });
+
+        $("input#pageIdTextBox[type='text']").change(function() {
+            $("#parantPage a").html("Page-Id: " + $(this).val());
+        });
+
+        function treeStructureToText() {
+            var syntax = "";
+
+            $("#pageView li").each(function() {
+                var liClass = $(this).attr("class");
+                liClass = liClass.replace("border-left", "");
+                liClass = liClass.replace(" ", "");
+                liClass = liClass.replace("_", ";");
+
+                var pagename = $("> a", this).html();
+                syntax = syntax + liClass + ";" + pagename + "\n";
+            });
+            $("#addPagesCode").val(syntax);
+        }
+
+    });
+</script>
+
+<fieldset class="lwadminform">
+    <legend class="lwadminform">AddPages</legend>
+
+    <div id="container">
+        <div id="inner_container" class="clearfix">
+
+            <div id="pageViewConfigContainer">
+                <form id="addPagesForm" class="form-horizontal" action="<?php echo $this->baseUrl."&cmd=save" ?>" method="POST">
+                    <div class="control-group">
+                        <label class="control-label" for="setDebug">Debug:</label>
+                        <div class="controls">
+                            <input type="checkbox" id="setDebug" name="debug" value="1" checked="checked">
+                        </div>
+                    </div>
+                    <?php if ($this->errors && array_key_exists("pageID", $this->errors)) : ?>
+                        <?php if (array_key_exists(1, $this->errors["pageID"])): ?>
+                            <div class="error">
+                                <p>Es muss eine PageID angegeben werden, damit unter dieser ID die neuen Seiten angelegt werden k&ouml;nnen.</p>
+                            </div>
+                        <?php endif; ?>
+                        <?php if (array_key_exists(6, $this->errors["pageID"])): ?>
+                            <div class="error">
+                                <p>Die PageID darf nur aus Zahlen bestehen.</p>
+                            </div>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                    <div class="control-group">
+                        <label class="control-label" for="pageIdTextBox">PageID:</label>
+                        <div class="controls">
+                            <input type="text" id="pageIdTextBox" name="pageID" value="<?php echo $this->values["pageID"]; ?>" style="height:30px;width: 60px;">
+                        </div>
+                    </div>
+                    <?php if ($this->errors && array_key_exists("templateID", $this->errors)) : ?>
+                        <?php if (array_key_exists(14, $this->errors["templateID"])): ?>
+                            <div class="error">
+                                <p>Es muss ein Template ausgew&auml;hlt werden.</p>
+                            </div>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                    <div class="control-group">
+                        <label class="control-label" for="templateIdSelectBox">Template:</label>
+                        <div class="controls">
+                            <select id="templateIdSelectBox" name="templateID" >
+                                <option value="0">bitte w&auml;hlen...</option>
+                                <?php foreach($this->templates as $template): ?>
+                                    <?php if($template["id"] == $this->values["templateID"]): ?>
+                                    <option value="<?php echo $template["id"]; ?>" selected="selected"><?php echo $template["name"]; ?></option>
+                                    <?php else: ?>
+                                        <option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <?php if ($this->errors && array_key_exists("pageCode", $this->errors)) : ?>
+                        <?php if (array_key_exists(1, $this->errors["pageCode"])): ?>
+                            <div class="error">
+                                <p>Es m&uuml;ssen eine oder mehrere Seiten definiert werden, die angelegt werden sollen.</p>
+                            </div>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                    <div class="control-group">
+                        <label class="control-label" for="addPagesCode">Code:</label>
+                        <div class="controls">
+                            <textarea id="addPagesCode" name="pageCode" style="height:300px;width: 300px;"></textarea>
+                        </div>
+                    </div>
+                    <input type="hidden" name="sent" value="1">
+                </form>
+            </div>
+
+            <div id="pageViewContainer">
+                <span style="font-size:10px;">Grafischer Assistent (Beta)</span><br><br>
+                <input id="addPage" type="button" value="+" class="btn btn-primary">
+                <input id="removePage" type="button" value="-" class="btn btn-warning">
+                <input id="resetPageTree" type="button" value="Reset" class="btn btn-danger"><br><br>
+                <div id="parantPage"><img src="<?php echo $this->iconPage; ?>"><a class="selected" href="#">Page-Id: ?</a></div>
+                <ul id="pageView">
+
+                </ul>
+            </div>
+        </div>
+        <hr>
+        <input type="button" class="btn btn-primary" value="speichern" onclick="$('#addPagesForm').submit();">
+        <input type="button" class="btn" value="abbrechen" onClick="changeUrl('admin.php?obj=admin');">
+    </div>
+</fieldset>
+
+<div id="hiddenElements">
+    <div id="hidden_ulli">
+        <ul class="last">
+            <li id="entry_0"><span class="connector_last">&nbsp;</span><img src="<?php echo $this->iconPageAdd; ?>"><a href="#" onclick="$('#pageViewContainer a').removeClass('selected');
+        $(this).addClass('selected');" >Neue Seite</a></li>
+        </ul>
+    </div>
+    <div id="hidden_li">
+        <li id="entry_0"><span class="connector_last">&nbsp;</span><img src="<?php echo $this->iconPageAdd; ?>"><a href="#" onclick="$('#pageViewContainer a').removeClass('selected');
+        $(this).addClass('selected');" >Neue Seite</a></li>
+    </div>
+</div>
