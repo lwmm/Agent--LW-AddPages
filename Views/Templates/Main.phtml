@@ -205,6 +205,8 @@
         margin-left: -1px
     }
 
+    #pageViewContainer #addCObject{display: none;}
+    
     #addPagesForm div.error{
         background-color: darkred;
         padding: 5px;
@@ -216,11 +218,112 @@
         width: 95%;
     }
     #addPagesForm div.error p{color: #fff;}
+    
+
+    #cobjectSelect{float: left;}
+
+    #cobjectMenuContainer{position: relative;}
+    
+    #cobjectMenuContainer #confirmCObjects{
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+    
+    #cobjectMenuContainer h3{font-size: 14px;}
+    
+    #cobjectMenuContainer h3.title{
+        font-weight:normal;
+        font-size: 12px;
+    }
+    
+    #cobjectMenuContainer h3.title span{
+        font-size:12px;
+        font-weight: bold;
+    }
+
+    #cobjectMiddelButtons{
+        float: left;
+        padding: 20px;
+        margin-top: 60px;
+    }
+
+    #cobjectMenuContainer{display: none;}
+    
+    #cobjectMenuContainer #cobjectAddedObjects{
+        float: left;
+    }
+    #cobjectMenuContainer #cobjectAddList{
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+    
+    #cobjectMenuContainer #cobjectAddedObjects ul li{
+        margin: 0 0 10px 0;
+        padding:  0 50px 0 10px;
+        border: 1px solid #bbb;
+        border-radius: 5px;
+        background-color: #f6f6f6;
+        position: relative;
+    }
+    
+    #cobjectMenuContainer #cobjectAddedObjects ul li img.remove{
+        cursor: pointer;
+        padding: 5px;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+    }
+    
+    #cobjectMenuContainer #cobjectAddedObjects ul li img{margin: 0 5px 0 10px;}
+    
+    #cobjectMenuContainer #addCobjectButton{
+        height: 350px;
+        font-weight: bold;
+        font-size: 20px;
+    }
+
 </style>
 
 <script>
     $(document).ready(function() {
+
+        var containerArray = new Array();
+        var reverseContainerArray = new Array();
+        var cobjectArray = new Array();
+        var reverseCobjectArray = new Array();
+        
+        <?php
+        echo "" . PHP_EOL;
+            foreach ($this->containers as $key => $container) {
+                if($key != "standard"){
+                    echo "containerArray[\"" . str_replace("c", "", $key) . "\"] = \"". $container ."\";" . PHP_EOL;
+                    echo "reverseContainerArray[\"" . $container . "\"] = \"". str_replace("c", "", $key) ."\";" . PHP_EOL;
+                }
+            }
+        echo "" . PHP_EOL;
+        ?>
+        <?php
+            echo "" . PHP_EOL;
+            foreach ($this->cobjects as $cobject) {
+                echo "cobjectArray[\"" . $cobject["id"] . "\"] = \"". $cobject["name"] ."\";" . PHP_EOL;
+                echo "reverseCobjectArray[\"" . $cobject["name"] . "\"] = \"". $cobject["id"] ."\";" . PHP_EOL;
+            }
+            echo "" . PHP_EOL;
+        ?>
+        
         var i = 0;
+        
+        $("#pageViewContainer a").click(function() {
+            $("#addCObject").hide();
+        });
+        
+        $("#confirmCObjects").click(function() {
+            $('#cobjectMenuContainer').hide();
+            $('#addPagesForm').show();
+        });
+
         $("#resetPageTree").click(function() {
             if (confirm("Gesamte Struktur wird entfernt ?")) {
                 $("ul#pageView li").remove();
@@ -240,73 +343,73 @@
 
         $("#addPage").click(function() {
             if ($("#pageViewContainer a").hasClass("selected")) {
-                i++;
                 var newPageName = prompt("Bitte Seitenname eingeben:");
-                if (newPageName === "") {
-                    newPageName = "Neue Seite Nr." + i;
-                }
-                var liId = $("a.selected").closest("li").attr("id");
+                if (newPageName.length > 0) {    
+                    i++;
 
-                if ($("#parantPage a").hasClass("selected")) {
-                    if ($("ul#PageView").children().size() === 0) {
-                        $('#hiddenElements #hidden_li li a').html(newPageName);
-                        $('#hiddenElements #hidden_li li').attr("id", "entry_" + i);
-                        $('#hiddenElements #hidden_li li').attr("class", i + "_x");
-                        $('#hiddenElements #hidden_li li').clone()
-                                .appendTo('ul#PageView');
+                    var liId = $("a.selected").closest("li").attr("id");
+
+                    if ($("#parantPage a").hasClass("selected")) {
+                        if ($("ul#PageView").children().size() === 0) {
+                            $('#hiddenElements #hidden_li li a').html(newPageName);
+                            $('#hiddenElements #hidden_li li').attr("id", "entry_" + i);
+                            $('#hiddenElements #hidden_li li').attr("class", i + "_x");
+                            $('#hiddenElements #hidden_li li').clone()
+                                    .appendTo('ul#PageView');
+                        } else {
+                            $("ul#pageView ul").removeClass("last");
+                            $("ul#PageView li span").removeClass('connector_last');
+                            $("ul#PageView li span").addClass('connector');
+                            $("#hiddenElements #hidden_li li span").removeClass('connector');
+                            $("#hiddenElements #hidden_li li span").addClass('connector_last');
+                            $('#hiddenElements #hidden_li li a').html(newPageName);
+                            $('#hiddenElements #hidden_li li').attr("id", "entry_" + i);
+                            $('#hiddenElements #hidden_li li').attr("class", i + "_x");
+                            $('#hiddenElements #hidden_li li').clone()
+                                    .appendTo('ul#PageView');
+                        }
                     } else {
-                        $("ul#pageView ul").removeClass("last");
-                        $("ul#PageView li span").removeClass('connector_last');
-                        $("ul#PageView li span").addClass('connector');
-                        $("#hiddenElements #hidden_li li span").removeClass('connector');
-                        $("#hiddenElements #hidden_li li span").addClass('connector_last');
-                        $('#hiddenElements #hidden_li li a').html(newPageName);
-                        $('#hiddenElements #hidden_li li').attr("id", "entry_" + i);
-                        $('#hiddenElements #hidden_li li').attr("class", i + "_x");
-                        $('#hiddenElements #hidden_li li').clone()
-                                .appendTo('ul#PageView');
-                    }
-                } else {
 
-                    var temp = $("li#" + liId).html();
-                    var index = temp.indexOf("<ul");
-                    var tempClass = $("li#" + liId).attr("class");
-                    tempClass = tempClass.replace("border-left", "");
-                    tempClass = tempClass.replace(" ", "");
-                    var parentId = tempClass.substring(0, tempClass.indexOf("_x"));
-                    tempClass = tempClass.replace(parentId + "_x", "");
+                        var temp = $("li#" + liId).html();
+                        var index = temp.indexOf("<ul");
+                        var tempClass = $("li#" + liId).attr("class");
+                        tempClass = tempClass.replace("border-left", "");
+                        tempClass = tempClass.replace(" ", "");
+                        var parentId = tempClass.substring(0, tempClass.indexOf("_x"));
+                        tempClass = tempClass.replace(parentId + "_x", "");
 
-                    if ($("ul#pageView li:last a").hasClass("selected") && $("ul#pageView li:last a.selected").children().size() === 0) {
-                        $('#hiddenElements #hidden_ulli li a').html(newPageName);
-                        $('#hiddenElements #hidden_ulli li').attr("id", "entry_" + i);
-                        $('#hiddenElements #hidden_ulli li').attr("class", i + "_x" + tempClass + ":" + parentId);
-                        $('#hiddenElements #hidden_ulli ul').addClass("last");
-                        $('#hiddenElements #hidden_ulli ul').clone()
-                                .appendTo("ul#pageView li:last");
-                    } else {
-                        if (index === -1) {
+                        if ($("ul#pageView li:last a").hasClass("selected") && $("ul#pageView li:last a.selected").children().size() === 0) {
                             $('#hiddenElements #hidden_ulli li a').html(newPageName);
                             $('#hiddenElements #hidden_ulli li').attr("id", "entry_" + i);
                             $('#hiddenElements #hidden_ulli li').attr("class", i + "_x" + tempClass + ":" + parentId);
-                            $('#hiddenElements #hidden_ulli ul').removeClass("last");
+                            $('#hiddenElements #hidden_ulli ul').addClass("last");
                             $('#hiddenElements #hidden_ulli ul').clone()
-                                    .appendTo("li#" + liId);
-
+                                    .appendTo("ul#pageView li:last");
                         } else {
-                            $('#hiddenElements #hidden_li li a').html(newPageName);
-                            $('#hiddenElements #hidden_li li').attr("id", "entry_" + i);
-                            $('#hiddenElements #hidden_li li').attr("class", i + "_x" + tempClass + ":" + parentId);
-                            $("#hiddenElements #hidden_li li span").removeClass('connector_last');
-                            $("#hiddenElements #hidden_li li span").addClass('connector');
-                            $("#hiddenElements #hidden_li li").clone()
-                                    .appendTo($("li#" + liId).children("ul"));
+                            if (index === -1) {
+                                $('#hiddenElements #hidden_ulli li a').html(newPageName);
+                                $('#hiddenElements #hidden_ulli li').attr("id", "entry_" + i);
+                                $('#hiddenElements #hidden_ulli li').attr("class", i + "_x" + tempClass + ":" + parentId);
+                                $('#hiddenElements #hidden_ulli ul').removeClass("last");
+                                $('#hiddenElements #hidden_ulli ul').clone()
+                                        .appendTo("li#" + liId);
+
+                            } else {
+                                $('#hiddenElements #hidden_li li a').html(newPageName);
+                                $('#hiddenElements #hidden_li li').attr("id", "entry_" + i);
+                                $('#hiddenElements #hidden_li li').attr("class", i + "_x" + tempClass + ":" + parentId);
+                                $("#hiddenElements #hidden_li li span").removeClass('connector_last');
+                                $("#hiddenElements #hidden_li li span").addClass('connector');
+                                $("#hiddenElements #hidden_li li").clone()
+                                        .appendTo($("li#" + liId).children("ul"));
+                            }
                         }
                     }
                 }
-            }
 
-            checkLiUl();
-            treeStructureToText();
+                checkLiUl();
+                treeStructureToText();
+            }
         });
 
         function checkLiUl() {
@@ -346,11 +449,81 @@
                 liClass = liClass.replace("_", ";");
 
                 var pagename = $("> a", this).html();
-                syntax = syntax + liClass + ";" + pagename + "\n";
+                
+                var cobjects = $("> div#cobjects", this).attr("class");
+                
+                if(cobjects !== ""){
+                    syntax = syntax + liClass + ";" + pagename + ";" + cobjects + "\n";
+                }else{
+                    syntax = syntax + liClass + ";" + pagename + "\n";
+                }
             });
             $("#addPagesCode").val(syntax);
         }
+        
+        $("ul#pageView").click(function() {
+            loadAddedConObjects();
+        });
+        
 
+        $("#addCobjectButton").click(function() {
+            var container = $("#containersSelect option:selected").html();
+            var cobject = $("#cobjectsSelect option:selected").html();
+            
+            $('#hiddenElements #hidden_cobject_li span.container').html(container);
+            $('#hiddenElements #hidden_cobject_li span.cobject').html(cobject);
+            $('#hiddenElements #hidden_cobject_li li').clone()
+                                .appendTo('ul#cobjectAddList');
+            
+        });
+        
+        $("#confirmCObjects").click(function() {
+            var preparedConObject = "";
+            
+            $("#cobjectAddedObjects ul#cobjectAddList li").each(function() {
+                var containerName = $("> span.container",this).html();
+                var cobjectName = $("> span.cobject",this).html();
+                preparedConObject += reverseContainerArray[containerName] + ":" + reverseCobjectArray[cobjectName] + ",";
+            });
+            
+            preparedConObject = preparedConObject.substr(0, preparedConObject.length - 1);
+            var selectedLiId = $("ul#pageView li a.selected").closest("li").attr("id");
+            $("ul#pageView li#" + selectedLiId + " div#cobjects").removeClass();
+            $("ul#pageView li#" + selectedLiId + " div#cobjects").addClass(preparedConObject);
+            
+            treeStructureToText();
+        });
+
+        $("input#addCObject").click(function() {
+            $('#addPagesForm').hide();
+            $('#cobjectMenuContainer').show();
+            loadAddedConObjects();
+        });
+        
+        function loadAddedConObjects()
+        {
+            var pagename = $('#pageView li a.selected').html();
+            $('#cobjectMenuContainer h3.title span').html(pagename);
+            $("#cobjectAddedObjects ul#cobjectAddList li").remove();
+
+            var selectedLiId = $("ul#pageView li a.selected").closest("li").attr("id");
+            var actuualConObjects = $("ul#pageView li#" + selectedLiId + " div#cobjects").attr("class");
+            
+            if(actuualConObjects !== ""){
+                var con_object_pairs = new Array();
+                con_object_pairs = actuualConObjects.split(",");
+
+                for( var pair in con_object_pairs){
+                    var tempArray = new Array();
+                    tempArray = con_object_pairs[pair].split(":");
+
+                    $('#hiddenElements #hidden_cobject_li span.container').html(containerArray[tempArray[0]]);
+                    $('#hiddenElements #hidden_cobject_li span.cobject').html(cobjectArray[tempArray[1]]);
+                    $('#hiddenElements #hidden_cobject_li li').clone()
+                                        .appendTo('ul#cobjectAddList');
+                }
+            }
+        }
     });
 </script>
 
@@ -361,7 +534,7 @@
         <div id="inner_container" class="clearfix">
 
             <div id="pageViewConfigContainer">
-                <form id="addPagesForm" class="form-horizontal" action="<?php echo $this->baseUrl."&cmd=save" ?>" method="POST">
+                <form id="addPagesForm" class="form-horizontal" action="<?php echo $this->baseUrl . "&cmd=save" ?>" method="POST" ENCTYPE="multipart/form-data">
                     <div class="control-group">
                         <label class="control-label" for="setDebug">Debug:</label>
                         <div class="controls">
@@ -398,9 +571,9 @@
                         <div class="controls">
                             <select id="templateIdSelectBox" name="templateID" >
                                 <option value="0">bitte w&auml;hlen...</option>
-                                <?php foreach($this->templates as $template): ?>
-                                    <?php if($template["id"] == $this->values["templateID"]): ?>
-                                    <option value="<?php echo $template["id"]; ?>" selected="selected"><?php echo $template["name"]; ?></option>
+                                <?php foreach ($this->templates as $template): ?>
+                                    <?php if ($template["id"] == $this->values["templateID"]): ?>
+                                        <option value="<?php echo $template["id"]; ?>" selected="selected"><?php echo $template["name"]; ?></option>
                                     <?php else: ?>
                                         <option value="<?php echo $template["id"]; ?>"><?php echo $template["name"]; ?></option>
                                     <?php endif; ?>
@@ -408,6 +581,20 @@
                             </select>
                         </div>
                     </div>
+                    <?php if ($this->errors && array_key_exists("uploadfield", $this->errors)) : ?>
+                        <?php if (array_key_exists(13, $this->errors["uploadfield"])): ?>
+                            <div class="error">
+                                <p>Unerlaubter Dateityp! Erlaubt sind txt und cps.</p>
+                            </div>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                    <div class="control-group">
+                        <label class="control-label" for="addPagesCode">CPS-File:</label>
+                        <div class="controls">
+                            <input class="upload" name="uploadfield" type="file">
+                        </div>
+                    </div>
+                    
                     <?php if ($this->errors && array_key_exists("pageCode", $this->errors)) : ?>
                         <?php if (array_key_exists(1, $this->errors["pageCode"])): ?>
                             <div class="error">
@@ -423,13 +610,50 @@
                     </div>
                     <input type="hidden" name="sent" value="1">
                 </form>
+                <div id="cobjectMenuContainer" class="clearfix">
+                    <input id="confirmCObjects" type="button" value="CObjects &uuml;bernehmen" class="btn btn-primary">
+                    <h3 class="title">CObject Men&uuml;: <img src="<?php echo $this->iconPage; ?>"><span></span></h3>
+                    <div id="cobjectSelect" style="width:220px;">
+                        <h3>Verf&uuml;gbare Container</h3>
+                        <select id="containersSelect" size="3">
+                            <?php foreach ($this->containers as $key => $container): ?>  
+                            <?php if($key != "standard"): ?>
+                                <?php if($key == $this->containers["standard"]): ?>
+                                    <option value="<?php echo str_replace("c", "", $key) ?>" selected="selected"><?php echo $container; ?></option>
+                                <?php else: ?>
+                                    <option value="<?php echo str_replace("c", "", $key) ?>"><?php echo $container; ?></option>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                            <?php endforeach; ?>
+                        </select>
+                        <h3>Verf&uuml;gbare CObjects</h3>
+                        <select id="cobjectsSelect" size="15">
+                            <?php foreach ($this->cobjects as $cobject): ?>  
+                                <?php if($cobject["name"] == "simples HTML"): ?>
+                                    <option value="<?php echo $cobject["id"] ?>" selected="selected"><?php echo $cobject["name"]; ?></option>
+                                <?php else: ?>
+                                    <option value="<?php echo $cobject["id"] ?>"><?php echo $cobject["name"]; ?></option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div id="cobjectMiddelButtons">
+                        <input id="addCobjectButton" type="button" value="+" class="btn">
+                    </div>
+                    <div id="cobjectAddedObjects" style="width:300px;">
+                        <h3>Hinzugef&uuml;gte CObjects</h3>
+                        <ul id="cobjectAddList">
+                        </ul>
+                    </div>
+                </div>
             </div>
 
             <div id="pageViewContainer">
                 <span style="font-size:10px;">Grafischer Assistent (Beta)</span><br><br>
                 <input id="addPage" type="button" value="+" class="btn btn-primary">
                 <input id="removePage" type="button" value="-" class="btn btn-warning">
-                <input id="resetPageTree" type="button" value="Reset" class="btn btn-danger"><br><br>
+                <input id="resetPageTree" type="button" value="Reset" class="btn btn-danger">
+                <input id="addCObject" type="button" value="CBox" class="btn btn-primary"><br><br>
                 <div id="parantPage"><img src="<?php echo $this->iconPage; ?>"><a class="selected" href="#">Page-Id: ?</a></div>
                 <ul id="pageView">
 
@@ -445,12 +669,17 @@
 <div id="hiddenElements">
     <div id="hidden_ulli">
         <ul class="last">
-            <li id="entry_0"><span class="connector_last">&nbsp;</span><img src="<?php echo $this->iconPageAdd; ?>"><a href="#" onclick="$('#pageViewContainer a').removeClass('selected');
-        $(this).addClass('selected');" >Neue Seite</a></li>
+            <li id="entry_0"><div id="cobjects" class="" style="width: 1px;height: 1px;">&nbsp;</div><span class="connector_last">&nbsp;</span><img src="<?php echo $this->iconPageAdd; ?>"><a href="#" onclick="$('#pageViewContainer a').removeClass('selected');
+        $(this).addClass('selected');
+        $('#addCObject').show();" >Neue Seite</a></li>
         </ul>
     </div>
     <div id="hidden_li">
-        <li id="entry_0"><span class="connector_last">&nbsp;</span><img src="<?php echo $this->iconPageAdd; ?>"><a href="#" onclick="$('#pageViewContainer a').removeClass('selected');
-        $(this).addClass('selected');" >Neue Seite</a></li>
+        <li id="entry_0"><div id="cobjects" class="" style="width: 1px;height: 1px;">&nbsp;</div><span class="connector_last">&nbsp;</span><img src="<?php echo $this->iconPageAdd; ?>"><a href="#" onclick="$('#pageViewContainer a').removeClass('selected');
+        $(this).addClass('selected');
+        $('#addCObject').show();" >Neue Seite</a></li>
+    </div>
+    <div id="hidden_cobject_li">
+        <li><span class="container"></span><img src="<?php echo $this->iconPlugin; ?>"><span class="cobject"></span><img class="remove" src="<?php echo $this->iconCross; ?>" onclick="if(confirm('CObject wirklich entfernen ?')){$(this).closest('li').remove();};"></li>
     </div>
 </div>

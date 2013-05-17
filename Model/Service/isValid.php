@@ -32,7 +32,8 @@ class isValid
         $this->allowedKeys = array(
             "pageID",
             "templateID",
-            "pageCode");
+            "pageCode",
+            "uploadfield");
 
         $this->errors = array();
     }
@@ -104,6 +105,21 @@ class isValid
             return false;
         }
         return true;
+    }
+    
+    private function uploadfieldValidate($fileDataArray)
+    {
+        if(empty($fileDataArray["name"])) {
+            return true;
+        }
+        $uploadExtension = \lw_io::getFileExtension($fileDataArray["name"]);
+        
+        if($uploadExtension == "txt" || $uploadExtension == "cps") {
+            return true;
+        }
+        
+        $this->addError("uploadfield", 13);
+        return false;
     }
     
 

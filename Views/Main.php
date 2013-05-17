@@ -12,8 +12,9 @@ class Main
         $this->config = $config;
     }
 
-    public function render($templates, $values =false, $errors = false)
+    public function render($templates, $cobjects, $values =false, $errors = false)
     {
+     #   print_r($this->config["container"]);die();
         $baseUrl = substr(\AgentAddPages\Services\Page::getUrl(), 0, strpos(\AgentAddPages\Services\Page::getUrl(), "index.php")) . "admin.php?obj=addpages";
 
         $view = new \lw_view(dirname(__FILE__) . '/Templates/Main.phtml');
@@ -23,12 +24,16 @@ class Main
         $view->iconPage = $this->config["url"]["media"]."pics/fatcow_icons/16x16_0680/page_white_text.png";
         $view->iconPageAdd = $this->config["url"]["media"]."pics/fatcow_icons/16x16_0680/page_white_put.png";
         $view->iconAdd = $this->config["url"]["media"]."pics/add.png";
+        $view->iconPlugin = $this->config["url"]["media"]."pics/fatcow_icons/16x16_0720/plugin.png";
+        $view->iconCross = $this->config["url"]["media"]."pics/fatcow_icons/16x16_0300/cross.png";
         
         $view->baseUrl = $baseUrl;
         
         $view->templates = $templates;
         $view->values = $values;
         $view->errors = $errors;
+        $view->cobjects = $cobjects;
+        $view->containers = $this->config["container"];
 
         return $view->render();
     }
