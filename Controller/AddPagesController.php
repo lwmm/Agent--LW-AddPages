@@ -49,11 +49,13 @@ class AddPagesController
 
                 $addPageStructure = new \AgentAddPages\Model\Service\CreateHierachicPageStructure($this->response->getDbObject(), $this->response->getDataByKey("userID"));
                 $pidArray = $addPageStructure->addMultipleHierarchicData($values["pageID"], $values["templateID"], $values["pageCode"], $debug);
-
+                $pageNames = $this->preparePageNames($values["pageCode"]);
+                
                 $array = $this->prepareContainerCObjectPairs($values["pageCode"]);
                 $i = 0;
                 foreach ($array as $pairs) {
                     $pairs = array_reverse($pairs);
+                    $k = 1;
                     foreach ($pairs as $p) {
                         $p = str_replace("\r", "", str_replace(PHP_EOL, "", $p));
                         $temp = explode(":", $p);
@@ -69,7 +71,7 @@ class AddPagesController
                             $commandHandler->insertEntry($oid, 0, $cid, $pidArray[$i], 1);
                         }
                         else {
-                            echo"<br>debug : in page " . $i . " inserted cbox " . $oid . " on pos 1 in container 1<br>";
+                            echo"<br>debug : in page " . $pageNames[$i] . " inserted cbox " . $oid . " on pos ".$k++." in container 1<br>";
                         }
                     }
                     $i++;
@@ -93,7 +95,6 @@ class AddPagesController
 
     private function prepareContainerCObjectPairs($array)
     {
-
         foreach ($array as $page) {
             $tempArray[] = explode(";", $page);
         }
@@ -102,6 +103,15 @@ class AddPagesController
         }
 
         return $containerCObjectPair;
+    }
+    
+    private function preparePageNames($array)
+    {
+        foreach ($array as $page) {
+            $tempArray = explode(";", $page);
+            $pageNames[] = $tempArray[2];
+        }
+        return $pageNames;
     }
 
 }
