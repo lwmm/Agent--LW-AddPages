@@ -342,7 +342,7 @@
         });
 
         $("#addPage").click(function() {
-            if ($("#pageViewContainer a").hasClass("selected")) {
+            if ($("#pageViewContainer div#parantPage a").hasClass("selected")) {
                 var newPageName = prompt("Bitte Seitenname eingeben:");
                 if (newPageName.length > 0) {    
                     i++;
@@ -662,7 +662,14 @@
             </div>
 
             <div id="pageViewContainer">
-                <span style="font-size:10px;">Grafischer Assistent (Beta)</span><br><br>
+                <span style="font-size:10px;">Grafischer Assistent (Beta)<br>
+                    <a href="#" style="cursor:pointer;background-color: #fff;color: #333;" onclick="if($('#knownBuggs').is(':visible')){$('#knownBuggs').slideUp();}else{$('#knownBuggs').slideDown();};">bekannte Bugs anzeigen</a>
+                </span>
+                <div id="knownBuggs" style="display:none;font-size:10px;">
+                    #1: nachdem eine Seite gel&ouml;scht wurde kann es vorkommen, dass ein Teil der TreeView-Border stehen bleibt.<br>
+                    #2: wenn CObjects zu einer Seite angelegt wurden und eine neue Child-Seite angelegt wird, kann es vorkommen, dass die CObjects der Parent-Seite &uuml;bernommen werden.
+                </div>
+                <br><br>
                 <input id="addPage" type="button" value="+" class="btn btn-primary">
                 <input id="removePage" type="button" value="-" class="btn btn-warning">
                 <input id="resetPageTree" type="button" value="Reset" class="btn btn-danger">
