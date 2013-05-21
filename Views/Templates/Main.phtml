@@ -483,7 +483,12 @@
             $("#cobjectAddedObjects ul#cobjectAddList li").each(function() {
                 var containerName = $("> span.container",this).html();
                 var cobjectName = $("> span.cobject",this).html();
-                preparedConObject += reverseContainerArray[containerName] + ":" + reverseCobjectArray[cobjectName] + ",";
+                
+                if($("#useCobjectNames").attr("checked")) {
+                    preparedConObject += reverseContainerArray[containerName] + ":" + cobjectName + ",";
+                }else{
+                    preparedConObject += reverseContainerArray[containerName] + ":" + reverseCobjectArray[cobjectName] + ",";
+                }
             });
             
             preparedConObject = preparedConObject.substr(0, preparedConObject.length - 1);
@@ -524,6 +529,11 @@
                 }
             }
         }
+        
+        $("#downloadBtn").click(function() {
+            $("#sent").attr("value",2);
+            $('#addPagesForm').submit();
+        });
     });
 </script>
 
@@ -608,11 +618,14 @@
                             <textarea id="addPagesCode" name="pageCode" style="height:300px;width: 300px;"></textarea>
                         </div>
                     </div>
-                    <input type="hidden" name="sent" value="1">
+                    <input id="sent" type="hidden" name="sent" value="1">
+                    <input style="margin-left: 180px;" type="button" class="btn" value="download code" id="downloadBtn">
                 </form>
                 <div id="cobjectMenuContainer" class="clearfix">
                     <input id="confirmCObjects" type="button" value="CObjects &uuml;bernehmen" class="btn btn-primary">
                     <h3 class="title">CObject Men&uuml;: <img src="<?php echo $this->iconPage; ?>"><span></span></h3>
+                    <div>ContentObject Names statt ID verwenden f&uuml;r den PageCode-Export: <input id="useCobjectNames" type="checkbox"></div>
+                    
                     <div id="cobjectSelect" style="width:220px;">
                         <h3>Verf&uuml;gbare Container</h3>
                         <select id="containersSelect" size="3">

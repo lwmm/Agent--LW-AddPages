@@ -1,4 +1,10 @@
 <?php
+/**
+ * The AddPagesAgent supports the creation of hierachic page structures.
+ * 
+ * @author Michael Mandt <michael.mandt@logic-works.de>
+ * @package Agent_AddPages
+ */
 
 class agent_addpages extends lw_agent
 {
@@ -21,6 +27,10 @@ class agent_addpages extends lw_agent
         $autoloader = new \AgentAddPages\Services\Autoloader();
     }
 
+    /**
+     * Returns the output of the main content.
+     * @return string
+     */
     protected function showEdit()
     {
         $response = new \AgentAddPages\Services\Response();
@@ -31,15 +41,13 @@ class agent_addpages extends lw_agent
         return $response->getOutputByKey("AgentAddPages");
     }
 
+    /**
+     * Returns the output of the left navigation.
+     * @return string
+     */
     protected function buildNav()
     {
         $view = new \AgentAddPages\Views\Navigation();
         return $view->render();
     }
-
-    protected function deleteAllowed()
-    {
-        return true;
-    }
-
 }

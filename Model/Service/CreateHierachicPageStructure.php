@@ -1,5 +1,13 @@
 <?php
-
+/**
+ * Prepares the hierarchic page structure for adding by the
+ * commandhanlder.
+ * 
+ * "addMultipleHierarchicData"-function by Dr. Andreas Eckhoff <andreas.eckhoff@logic-works.de>
+ * 
+ * @author Michael Mandt <michael.mandt@logic-works.de>
+ * @package Agent_AddPages
+ */
 namespace AgentAddPages\Model\Service;
 
 class CreateHierachicPageStructure

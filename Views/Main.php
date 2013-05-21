@@ -1,4 +1,10 @@
 <?php
+/**
+ * The main html output will be build.
+ * 
+ * @author Michael Mandt <michael.mandt@logic-works.de>
+ * @package Agent_AddPages
+ */
 
 namespace AgentAddPages\Views;
 
@@ -7,14 +13,24 @@ class Main
 
     protected $config;
 
+    /**
+     * @param array $config
+     */
     public function __construct($config)
     {
         $this->config = $config;
     }
 
+    /**
+     * Returns rendered html.
+     * @param array $templates
+     * @param array $cobjects
+     * @param array $values
+     * @param array $errors
+     * @return string
+     */
     public function render($templates, $cobjects, $values =false, $errors = false)
     {
-     #   print_r($this->config["container"]);die();
         $baseUrl = substr(\AgentAddPages\Services\Page::getUrl(), 0, strpos(\AgentAddPages\Services\Page::getUrl(), "index.php")) . "admin.php?obj=addpages";
 
         $view = new \lw_view(dirname(__FILE__) . '/Templates/Main.phtml');

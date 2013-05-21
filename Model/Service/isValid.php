@@ -4,7 +4,7 @@
  * Informations of the add/edit form will be checked if it's a valid input.
  * 
  * @author Michael Mandt <michael.mandt@logic-works.de>
- * @package lw_events
+ * @package Agent_AddPages
  */
 
 namespace AgentAddPages\Model\Service;

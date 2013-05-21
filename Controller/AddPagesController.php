@@ -1,4 +1,10 @@
 <?php
+/**
+ * Main controller of the add pages agent.
+ * 
+ * @author Michael Mandt <michael.mandt@logic-works.de>
+ * @package Agent_AddPages
+ */
 
 namespace AgentAddPages\Controller;
 
@@ -9,6 +15,11 @@ class AddPagesController
     protected $response;
     protected $request;
 
+    /**
+     * @param array $config
+     * @param object $response
+     * @param object $request
+     */
     public function __construct($config, $response, $request)
     {
         $this->config = $config;
@@ -16,14 +27,26 @@ class AddPagesController
         $this->request = $request;
     }
 
+    /**
+     * Collects and sets informations for the requested task. 
+     */
     public function execute()
     {
         $view = new \AgentAddPages\Views\Main($this->config);
         $queryHandler = new \AgentAddPages\Model\DataHandler\QueryHandler($this->response->getDbObject());
         $commandHandler = new \AgentAddPages\Model\DataHandler\CommandHandler($this->response->getDbObject(), $this->response->getDataByKey("userID"));
         $cobjects = $queryHandler->getContentObjects();
-
+        
         if ($this->request->getInt("sent") && $this->request->getAlnum("cmd") == "save") {
+            
+            if($this->request->getInt("sent") == 2 && $this->request->getRaw("pageCode") != "" ){
+                $str = $this->request->getRaw("pageCode");
+                $filename = "CPS_".date("YmdHis").".cps";
+                header('Content-Type: application/octet-stream;');
+                header("Content-Disposition: attachment; filename=\"".$filename."\";" ); 
+                die($str);
+             }
+            
             $debug = $this->request->getInt("debug");
             $fileDataArray = $this->request->getFileData("uploadfield");
 
@@ -93,6 +116,13 @@ class AddPagesController
         }
     }
 
+    /**
+     * Prepares an array which contains the combination of container and
+     * content object.
+     * 
+     * @param array $array
+     * @return array
+     */
     private function prepareContainerCObjectPairs($array)
     {
         foreach ($array as $page) {
@@ -105,6 +135,13 @@ class AddPagesController
         return $containerCObjectPair;
     }
     
+    /**
+     * The pagenames are filtered and collected in an
+     * array from the post pageCode.
+     * 
+     * @param array $array
+     * @return array
+     */
     private function preparePageNames($array)
     {
         foreach ($array as $page) {

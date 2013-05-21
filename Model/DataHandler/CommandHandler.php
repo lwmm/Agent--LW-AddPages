@@ -1,5 +1,12 @@
 <?php
-
+/**
+ * The commandhandler adds pages and contentobjects to the database.
+ * 
+ * "insertEntry"-function by Dr. Andreas Eckhoff <andreas.eckhoff@logic-works.de>
+ * 
+ * @author Michael Mandt <michael.mandt@logic-works.de>
+ * @package Agent_AddPages
+ */
 namespace AgentAddPages\Model\DataHandler;
 
 class CommandHandler
@@ -9,6 +16,10 @@ class CommandHandler
     protected $userID;
     protected $queryHandler;
 
+    /**
+     * @param object $db
+     * @param int $userID
+     */
     public function __construct($db, $userID)
     {
         $this->db = $db;
@@ -16,6 +27,11 @@ class CommandHandler
         $this->queryHandler = new \AgentAddPages\Model\DataHandler\QueryHandler($db);
     }
 
+    /**
+     * One page will be added to the database.
+     * @param array $array
+     * @return int
+     */
     public function addPage($array)
     {
         $this->db->setStatement("INSERT INTO t:lw_pages (name, page_template, relation, seq, path, lw_first_user, lw_last_user) VALUES (:name, :page_template, :relation, :seq, :path, :user, :user) ");
@@ -29,9 +45,17 @@ class CommandHandler
         return $this->db->pdbinsert($this->db->gt("lw_pages"));
     }
 
+    /**
+     * A contentbject will be added to the database.
+     * @param int $oid
+     * @param int $pos
+     * @param int $cid
+     * @param int $index
+     * @param int $amount
+     * @return bool
+     */
     public function insertEntry($oid, $pos = false, $cid = false, $index = false, $amount = false)
     {
-        //echo "oid: ".$oid." pos: ".$pos." cid: ".$cid." index: ".$index." amount: ".$amount." "; exit();
         if ($amount > 10) {
             return false;
         }
@@ -90,6 +114,12 @@ class CommandHandler
         }
     }
 
+    /**
+     * Sequence number will be adjusted.
+     * @param string $todo
+     * @param int $posEntry
+     * @return bool
+     */
     private function changeAllSeqsAbove($todo, $posEntry)
     {
         if ($todo == "add") {
@@ -104,6 +134,11 @@ class CommandHandler
         return $this->db->pdbquery();
     }
 
+    /**
+     * Updates the date of last change.
+     * @param int $pid
+     * @return bool
+     */
     private function updateLastChange($pid)
     {
         $this->db->setStatement("UPDATE t:lw_pages SET changed = :date WHERE id = :id ");
