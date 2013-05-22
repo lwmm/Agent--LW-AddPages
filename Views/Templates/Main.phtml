@@ -342,7 +342,6 @@
         });
 
         $("#addPage").click(function() {
-            if ($("#pageViewContainer div#parantPage a").hasClass("selected")) {
                 var newPageName = prompt("Bitte Seitenname eingeben:");
                 if (newPageName.length > 0) {    
                     i++;
@@ -409,7 +408,6 @@
 
                 checkLiUl();
                 treeStructureToText();
-            }
         });
 
         function checkLiUl() {
