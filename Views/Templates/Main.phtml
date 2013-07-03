@@ -491,8 +491,8 @@
             
             preparedConObject = preparedConObject.substr(0, preparedConObject.length - 1);
             var selectedLiId = $("ul#pageView li a.selected").closest("li").attr("id");
-            $("ul#pageView li#" + selectedLiId + " div#cobjects").removeClass();
-            $("ul#pageView li#" + selectedLiId + " div#cobjects").addClass(preparedConObject);
+            $("ul#pageView li#" + selectedLiId + " > div#cobjects").removeClass();
+            $("ul#pageView li#" + selectedLiId + " > div#cobjects").addClass(preparedConObject);
             
             treeStructureToText();
         });
@@ -665,7 +665,6 @@
                 </span>
                 <div id="knownBuggs" style="display:none;font-size:10px;">
                     #1: nachdem eine Seite gel&ouml;scht wurde kann es vorkommen, dass ein Teil der TreeView-Border stehen bleibt.<br>
-                    #2: wenn CObjects zu einer Seite angelegt wurden und eine neue Child-Seite angelegt wird, kann es vorkommen, dass die CObjects der Parent-Seite &uuml;bernommen werden.
                 </div>
                 <br><br>
                 <input id="addPage" type="button" value="+" class="btn btn-primary">
